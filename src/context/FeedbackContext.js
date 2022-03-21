@@ -1,5 +1,4 @@
 import { createContext, useState, useEffect } from "react";
-import { v4 as uuidv4 } from 'uuid'
 
 const FeedbackContext = createContext()
 
@@ -18,7 +17,7 @@ export const FeedbackProvider = ({ children }) => {
 
   //Fetch Feedbcak
   const fetchFeedback = async () => {
-    const reponse = await fetch(`http://localhost:5000/feedback?_sort=id_order=desc`)
+    const reponse = await fetch(`/feedback?_sort=id_order=desc`)
     const data = await reponse.json()
 
     setFeedback(data)
@@ -26,24 +25,48 @@ export const FeedbackProvider = ({ children }) => {
   }
 
   //add feedback item
-  const addFeedback = (newFeedback) => {
-    newFeedback.id = uuidv4()
+  const addFeedback = async (newFeedback) => {
+
+    const response = await fetch('/feedback', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newFeedback),
+    })
+
+    const data = await response.json()
+
     //destructuring all the existing feedback and adding the new feedback to the array
-    setFeedback([newFeedback, ...feedback])
+    setFeedback([data, ...feedback])
   }
 
   //delete feedback item
   //filter -> looks through all of the items in the feedback array, if it matches one with the same id then we update the state of feedback for that item with the edited value in the form
-  const deleteFeedback = (id) => {
+  const deleteFeedback = async (id) => {
     if (window.confirm('Are you sure you want to delete?')) {
+
+      await fetch(`/feedback/${id}`, {method: 'DELETE'})
+
       setFeedback(feedback.filter((item) => item.id !== id))
     }
   }
 
   //update feedback item
-  const updateFeedback = (id, updItem) => {
+  const updateFeedback = async (id, updItem) => {
+
+    const response = await fetch(`feedback/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updItem)
+    })
+
+    const data = await response.json()
+
     setFeedback(feedback.map((item) =>
-      (item.id === id ? { ...item, ...updItem } : item))
+      (item.id === id ? { ...item, ...data } : item))
     )
   }
 
