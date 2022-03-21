@@ -5,7 +5,7 @@ const FeedbackContext = createContext()
 
 export const FeedbackProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true)
-  const [feedback, setFeedback] = useState(FeedbackData)
+  const [feedback, setFeedback] = useState([]])
 
   const [feedbackEdit, setFeedbackEdit] = useState({
     item: {},
@@ -14,7 +14,6 @@ export const FeedbackProvider = ({ children }) => {
 
   useEffect(() => {
     fetchFeedback()
-    setIsLoading(false)
   }, [])
 
   //Fetch Feedbcak
