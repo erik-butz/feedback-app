@@ -1,10 +1,11 @@
 import { createContext, useState, useEffect } from "react";
+import FeedbackData from '../data/FeedbackData'
 
 const FeedbackContext = createContext()
 
 export const FeedbackProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true)
-  const [feedback, setFeedback] = useState([])
+  const [feedback, setFeedback] = useState(FeedbackData)
 
   const [feedbackEdit, setFeedbackEdit] = useState({
     item: {},
@@ -13,13 +14,13 @@ export const FeedbackProvider = ({ children }) => {
 
   useEffect(() => {
     fetchFeedback()
-  },[])
+    setIsLoading(false)
+  }, [])
 
   //Fetch Feedbcak
   const fetchFeedback = async () => {
     const reponse = await fetch(`/feedback?_sort=id_order=desc`)
     const data = await reponse.json()
-
     setFeedback(data)
     setIsLoading(false)
   }
@@ -46,7 +47,7 @@ export const FeedbackProvider = ({ children }) => {
   const deleteFeedback = async (id) => {
     if (window.confirm('Are you sure you want to delete?')) {
 
-      await fetch(`/feedback/${id}`, {method: 'DELETE'})
+      await fetch(`/feedback/${id}`, { method: 'DELETE' })
 
       setFeedback(feedback.filter((item) => item.id !== id))
     }
